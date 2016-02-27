@@ -2,26 +2,34 @@ package epam.spring.core.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import epam.spring.core.bean.Event;
-import epam.spring.core.bean.Ticket;
 import epam.spring.core.bean.User;
+import epam.spring.core.dao.AuditoriumBookingDao;
+import epam.spring.core.dao.TicketBookingDao;
 import epam.spring.core.dao.UserDao;
 import epam.spring.core.service.BookingService;
 
-@Component
 public class BookingServiceImpl implements BookingService {
-
-	private static final int FIRST_ELEMENT = 1;
 
 	private static final int VIP_SEAT_RAIT = 2;
 
+	private TicketBookingDao ticketBookingDao;
+	private AuditoriumBookingDao auditoriumBookingDao;
+
 	@Autowired
-	private UserDao userDao;
+	public void setUserDao(UserDao userDao) {
+	}
+	@Autowired
+	public void setTicketBookingDao(TicketBookingDao ticketBookingDao) {
+		this.ticketBookingDao = ticketBookingDao;
+	}
+	@Autowired
+	public void setAuditoriumBookingDao(AuditoriumBookingDao auditoriumBookingDao) {
+		this.auditoriumBookingDao = auditoriumBookingDao;
+	}
 
 	public BigDecimal getTicketPrice(Event event, Date date, int seats, User user, boolean isVipSeat) {
 		BigDecimal ticketPrice = event.getPrice();
@@ -31,31 +39,18 @@ public class BookingServiceImpl implements BookingService {
 		return ticketPrice;
 	}
 
-	public void bookTicket(User user, Ticket ticket) {
-		String email = user.getEmail();
-		if (isUserRegistered(email))
-			user.getBookedTickets().add(ticket);
-		Map<Date, Integer> purchasedTickets = ticket.getEvent().getPurchasedTickets();
-		Date dateKey = ticket.getDate();
-		if (purchasedTickets.containsKey(dateKey)) {
-			Integer tickets = purchasedTickets.get(dateKey);
-			if (tickets != null)
-				purchasedTickets.put(dateKey, ++tickets);
-		} else
-			purchasedTickets.put(dateKey, FIRST_ELEMENT);
+	public void bookTicket(User user, int tickets, Event event, Date date) {
+		ticketBookingDao.bookTicket(user, tickets, event);
+		auditoriumBookingDao.setBookedTicketsByEvent(event.getName(), date, tickets);
+
 	}
 
+	@Override
 	public int getTicketsForEvent(Event event, Date date) {
-		return event.getPurchasedTickets().get(date);
+		return auditoriumBookingDao.getBookedTicketsByEvent(event.getName(), date);
 	}
 
-	private boolean isUserRegistered(String email) {
-		if (!userDao.getRegisteredUsers().isEmpty()) {
-			for (User user : userDao.getRegisteredUsers()) {
-				if (user.getEmail().equals(email))
-					return true;
-			}
-		}
-		return false;
-	}
+
+
+
 }

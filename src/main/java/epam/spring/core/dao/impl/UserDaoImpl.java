@@ -4,89 +4,81 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.springframework.stereotype.Component;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import epam.spring.core.bean.Ticket;
 import epam.spring.core.bean.User;
 import epam.spring.core.dao.UserDao;
+import epam.spring.core.dao.rowmapper.UserRowMapper;
 import epam.spring.core.helper.DateConverterUtils;
 
-@Component
 public class UserDaoImpl implements UserDao {
 
-	public static List<User> registeredUsers; // make it static
-	public static User user;
-	public static Date date;
-	public static Ticket ticket;
+	public static User user1;
+	public static User user2;
+	public static Date date1;
+	public static Date date2;
+	public static Date date3;
+	public static User user3;
 
-	static {
-		user = new User();
-		user.setId(3L);
-		try {
-			date = DateConverterUtils.getDate("25-24-2015");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		user.setBirthday(date);
-		user.setFullName("Ivan Golovenko");
-		user.setEmail("ivan_golovenko@gmail.com");
-		user.setBookedTickets(new ArrayList<Ticket>());
-		ticket = new Ticket(EventDaoImpl.event1, date);
-		registeredUsers = new CopyOnWriteArrayList <User>();
+	private JdbcTemplate jdbcTemplate;
+
+	public JdbcTemplate getJdbcTemplate() {
+		return jdbcTemplate;
+	}
+
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+
+	public void init() throws ParseException {
+		date1 = DateConverterUtils.getDate("25-04-2000");
+		date2 = DateConverterUtils.getDate("10-04-2005");
+		date3 = DateConverterUtils.getDate("15-05-2003");
+
+		user1 = new User(1, "Ivan Golovenko", date1, "ivan_golovenko@gmail.com");
+		user2 = new User(2, "Vasyl Petrenko", date2, "vasyl_petrenko@gmail.com");
+		user3 = new User(3, "Vasyl Golovenko", date3, "vasyl_golovenko@gmail.com");
 
 	}
 
 	public List<User> getRegisteredUsers() {
-		return registeredUsers;
-	}
-
-	public void setRegisteredUsers(List<User> registeredUsers) {
-		UserDaoImpl.registeredUsers = registeredUsers;
+		String selectAllSql = "SELECT * FROM USER;";
+		return getJdbcTemplate().query(selectAllSql, new UserRowMapper());
 	}
 
 	public void register(User user) {
-		if (!registeredUsers.contains(user))
-			registeredUsers.add(user);
+		String insertSql = "INSERT INTO USER (ID, FULL_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?);";
+		String name = user.getFullName();
+		String email = user.getEmail();
+		Date birthday = user.getBirthday();
+		Integer id = user.getId();
+		getJdbcTemplate().update(insertSql, new Object[] { id, name, email, birthday });
 	}
 
 	public void remove(User user) {
-		if (registeredUsers.contains(user))
-			registeredUsers.remove(user);
+		getJdbcTemplate().update("DELETE FROM USER WHERE id = ?", new Object[] { user.getId() });
 	}
 
-	public User getById(Long id) {
-		User user = new User();
-		for (User regUser : registeredUsers) {
-			if (regUser.getId() == id) {
-				return regUser;
-			}
+	public User getById(int id) {
+		User user;
+		try {
+			user = this.jdbcTemplate.queryForObject("select ID, FULL_NAME, EMAIL, BIRTHDAY from USER where ID = ?", new Object[] { id }, new UserRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			return null;
 		}
 		return user;
 	}
 
 	public User getUserByEmail(String email) {
-		User user = new User();
-		for (User regUser : registeredUsers) {
-			if (regUser.getEmail() == email) {
-				return regUser;
-			}
-		}
+		User user = this.jdbcTemplate.queryForObject("select ID, FULL_NAME, EMAIL, BIRTHDAY from USER where EMAIL = ?", new Object[] { email }, new UserRowMapper());
 		return user;
 	}
 
 	public User getUserByName(String name) {
-		User user = new User();
-		for (User regUser : registeredUsers) {
-			if (regUser.getFullName() == name) {
-				return regUser;
-			}
-		}
+		User user = this.jdbcTemplate.queryForObject("select ID, FULL_NAME, EMAIL, BIRTHDAY from USER where FULL_NAME = ?", new Object[] { name }, new UserRowMapper());
 		return user;
 	}
 
-	public List<Ticket> getBookedTickets(User user) {
-		return user.getBookedTickets();
-	}
 }

@@ -8,13 +8,13 @@ public class Auditorium {
 
 	private String name;
 	private List<String> vipSeats;
-	private String seats;
+	private int seats;
 	private List<Date> boookedTime;
 
-	Auditorium() {
+	public Auditorium() {
 	}
 
-	public Auditorium(String name, String vipSeats, String seats) {
+	public Auditorium(String name, String vipSeats, int seats) {
 		this.name = name;
 		this.vipSeats = Arrays.asList(vipSeats.split(","));
 		this.seats = seats;
@@ -28,11 +28,11 @@ public class Auditorium {
 		this.vipSeats = vipSeats;
 	}
 
-	public String getSeats() {
+	public int getSeats() {
 		return seats;
 	}
 
-	public void setSeats(String seats) {
+	public void setSeats(int seats) {
 		this.seats = seats;
 	}
 
@@ -58,7 +58,6 @@ public class Auditorium {
 		int result = 1;
 		result = prime * result + ((boookedTime == null) ? 0 : boookedTime.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((seats == null) ? 0 : seats.hashCode());
 		result = prime * result + ((vipSeats == null) ? 0 : vipSeats.hashCode());
 		return result;
 	}
@@ -81,11 +80,6 @@ public class Auditorium {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (seats == null) {
-			if (other.seats != null)
-				return false;
-		} else if (!seats.equals(other.seats))
 			return false;
 		if (vipSeats == null) {
 			if (other.vipSeats != null)

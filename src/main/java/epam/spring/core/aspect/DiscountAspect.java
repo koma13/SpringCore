@@ -1,41 +1,44 @@
 package epam.spring.core.aspect;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import epam.spring.core.bean.Event;
 import epam.spring.core.bean.User;
+import epam.spring.core.dao.AspectDiscountDao;
 
 @Aspect
 @Component
 public class DiscountAspect {
 
-	public static Map<User, Integer> discountByUserCounter = new HashMap<User, Integer>();
-	public static int allDiscountCounter = 0;
+	private static final int _100_PERCENTAGE = 100;
+	private AspectDiscountDao aspectDiscountDao;
 
-	@Around(value = "execution(* epam.spring.core.service.impl.*.getDiscount(..))")
-	public void countDiscount(ProceedingJoinPoint joinPoint) throws Throwable {
-		int counter = 1;
+	public AspectDiscountDao getAspectDiscountDao() {
+		return aspectDiscountDao;
+	}
+
+	@Autowired
+	public void setAspectDiscountDao(AspectDiscountDao aspectDiscountDao) {
+		this.aspectDiscountDao = aspectDiscountDao;
+	}
+
+	@AfterReturning(value = "execution(* epam.spring.core.service.impl.*.getDiscount(..))", returning="returnVal")
+	public void countDiscount(JoinPoint joinPoint, Object returnVal) throws Throwable {
 		Object[] args = joinPoint.getArgs();
 		User user = (User) args[0];
-		synchronized (discountByUserCounter) {
-
-			if (discountByUserCounter.containsKey(user)) {
-				counter = discountByUserCounter.get(user);
-				discountByUserCounter.put(user, increaseCounter(counter));
-			} else {
-				discountByUserCounter.put(user, counter);
-			}
-			allDiscountCounter++;
+		Event event  = (Event)args[1];
+		int eventPrice = event.getPrice().intValue();
+		int priceWithDiscount = ((BigDecimal)returnVal).intValue();
+		int discountInPercentage = priceWithDiscount/eventPrice*_100_PERCENTAGE;
+		if(eventPrice>priceWithDiscount){
+			aspectDiscountDao.addDiscountForUser(user.getId(), event.getName(), discountInPercentage);
 		}
-		joinPoint.proceed(args);
 	}
 
-	private int increaseCounter(int counter) {
-		return counter++;
-	}
 }

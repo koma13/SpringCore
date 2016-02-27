@@ -22,16 +22,20 @@ import epam.spring.core.service.DiscountService;
 @ContextConfiguration("classpath:discount_strategies.xml")
 public class DiscountServiceTest {
 
-	@Autowired
-	private DiscountService service;
+	private DiscountService discountService;
 
 	@Test
 	public void testGetDiscountForBirthday() throws ParseException {
-		Date date = UserDaoImpl.date;
-		User user = UserDaoImpl.user;
+		Date date = UserDaoImpl.date1;
+		User user = UserDaoImpl.user1;
 		Event event = EventDaoImpl.event1;
-		BigDecimal priceWithDiscount = service.getDiscount(user, event, date);
+		BigDecimal priceWithDiscount = discountService.getDiscount(user, event, date);
 		boolean isPriceWithDiscount = event.getPrice().compareTo(priceWithDiscount) > 0;
 		assertTrue("The price shoud be lower for birthday", isPriceWithDiscount);
+	}
+
+	@Autowired
+	public void setDiscountService(DiscountService discountService) {
+		this.discountService = discountService;
 	}
 }

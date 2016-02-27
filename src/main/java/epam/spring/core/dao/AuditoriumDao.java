@@ -10,6 +10,6 @@ public interface AuditoriumDao {
 
 	public List<String> getVipSeats(String auditoriumName) throws Exception;
 
-	int getSeatsNumber(String auditoriumName) throws Exception;
+	public int getSeatsNumber(String auditoriumName) throws Exception;
 
 }

@@ -5,35 +5,31 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import epam.spring.core.bean.Event;
 import epam.spring.core.bean.User;
 import epam.spring.core.helper.DiscountStrategy;
 import epam.spring.core.service.DiscountService;
 
-@Component
 public class DiscountServiceImpl implements DiscountService {
 
 	private List<DiscountStrategy> strategies;
-
-	public List<DiscountStrategy> getStrategies() {
-		return strategies;
-	}
-
+	@Autowired
 	public void setStrategies(List<DiscountStrategy> strategies) {
 		this.strategies = strategies;
 	}
 
 	public BigDecimal getDiscount(User user, Event event, Date date) throws ParseException {
-		BigDecimal price = event.getPrice();
-		BigDecimal discountOption;
+		int price = event.getPrice().intValue();
+		int discountOption;
 		for (DiscountStrategy strategy : strategies) {
-			discountOption = strategy.getDiscountStrategy(user, event, date);
-			if (discountOption.compareTo(price) < 0)
+			discountOption = strategy.getDiscountStrategy(user, event, date).intValue();
+			if (discountOption<price){
 				price = discountOption;
 		}
-		return price;
+		}
+		return new BigDecimal(price);
 
 	}
 

@@ -19,23 +19,18 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
 	}
 
 	public int getSeatsNumber(String auditoriumName) throws Exception {
-		int seatsNumber = 0;
 		for (Auditorium auditorium : auditoriums)
 			if (auditorium.getName().equals(auditoriumName))
 				return Integer.valueOf(auditorium.getSeats());
-		if (seatsNumber == 0)
-			throw new Exception("There is no auditorium with name " + auditoriumName);
+
 		return 0;
 	}
 
 	public List<String> getVipSeats(String auditoriumName) throws Exception {
-		int seatsNumber = 0;
 		for (Auditorium auditorium : auditoriums) {
 			if (auditorium.getName().equals(auditoriumName))
 				return auditorium.getVipSeats();
 		}
-		if (seatsNumber == 0)
-			throw new Exception("There is no auditorium with name " + auditoriumName);
 		return new ArrayList<String>();
 	}
 }

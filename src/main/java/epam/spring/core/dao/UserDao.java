@@ -2,13 +2,12 @@ package epam.spring.core.dao;
 
 import java.util.List;
 
-import epam.spring.core.bean.Ticket;
 import epam.spring.core.bean.User;
 
 public interface UserDao {
 	public void remove(User user);
 
-	public User getById(Long id);
+	public User getById(int id);
 
 	public User getUserByEmail(String email);
 
@@ -18,5 +17,4 @@ public interface UserDao {
 
 	public List<User> getRegisteredUsers();
 
-	public List<Ticket> getBookedTickets(User user);
 }

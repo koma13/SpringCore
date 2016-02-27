@@ -12,8 +12,9 @@ public class BirthdayDiscountStrategy implements DiscountStrategy {
 	private static final double BIRTHDAY_DISCONT = 0.05;
 
 	public BigDecimal getDiscountStrategy(User user, Event event, Date date) throws ParseException {
-		if (DateConverterUtils.getBirthday(user.getBirthday()).equals(DateConverterUtils.getBirthday(date)))
-			return event.getPrice().multiply(new BigDecimal(1 - BIRTHDAY_DISCONT));
+		if (DateConverterUtils.getBirthday(user.getBirthday()).equals(DateConverterUtils.getBirthday(date))){
+			return (event.getPrice().multiply(new BigDecimal(1 - BIRTHDAY_DISCONT)));
+		}
 		return event.getPrice();
 	}
 
