@@ -52,7 +52,6 @@ public class AspectCounterDaoImpl implements AspectCounterDao {
 		if (count > 0) {
 			result = true;
 		}
-
 		return result;
 	}
 

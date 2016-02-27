@@ -10,7 +10,7 @@ import epam.spring.core.bean.User;
 import epam.spring.core.dao.TicketBookingDao;
 
 public class TenthTicketDiscountStrategy implements DiscountStrategy {
-	
+
 	private TicketBookingDao ticketBooking;
 
 	@Autowired

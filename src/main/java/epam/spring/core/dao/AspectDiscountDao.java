@@ -8,6 +8,6 @@ public interface AspectDiscountDao {
 
 	public int getDiscountCountByUser(User user);
 
-	void removeDataFromTable();
+	public void removeDataFromTable();
 
 }

@@ -1,7 +1,6 @@
 package epam.spring.core.dao.impl;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

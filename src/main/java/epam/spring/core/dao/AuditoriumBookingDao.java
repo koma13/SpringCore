@@ -13,6 +13,6 @@ public interface AuditoriumBookingDao {
 
 	public int getBookedTicketsByEvent(String eventname, Date date);
 
-	void removeDataFromTable();
+	public void removeDataFromTable();
 
 }

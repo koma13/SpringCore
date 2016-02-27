@@ -31,7 +31,6 @@ public class AspectDiscountDaoImpl implements AspectDiscountDao{
 		}
 		return discountByUser;
 	}
-	
 
 	@Override
 	public void removeDataFromTable() {

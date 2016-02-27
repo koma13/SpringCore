@@ -15,6 +15,7 @@ import epam.spring.core.service.DiscountService;
 public class DiscountServiceImpl implements DiscountService {
 
 	private List<DiscountStrategy> strategies;
+
 	@Autowired
 	public void setStrategies(List<DiscountStrategy> strategies) {
 		this.strategies = strategies;
@@ -25,9 +26,9 @@ public class DiscountServiceImpl implements DiscountService {
 		int discountOption;
 		for (DiscountStrategy strategy : strategies) {
 			discountOption = strategy.getDiscountStrategy(user, event, date).intValue();
-			if (discountOption<price){
+			if (discountOption < price) {
 				price = discountOption;
-		}
+			}
 		}
 		return new BigDecimal(price);
 

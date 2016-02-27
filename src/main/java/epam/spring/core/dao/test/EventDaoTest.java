@@ -32,12 +32,10 @@ public class EventDaoTest {
 	@Before
 	public void prepareTestData() {
 		cleanEventTable();
-
 		event = EventDaoImpl.event1;
 		eventDao.create(event);
 		eventToRemove = EventDaoImpl.event3;
 		eventDao.create(eventToRemove);
-
 	}
 
 	@Test
@@ -56,10 +54,8 @@ public class EventDaoTest {
 
 	@Test
 	public void testGetRegisteredEvents() throws ParseException {
-
 		List<Event> Events = eventDao.getAllEvents();
 		assertNotNull("Event name is not as expected", Events.size());
-
 	}
 
 	@Test
